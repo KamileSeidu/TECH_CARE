@@ -1,28 +1,50 @@
 import PatientsList from "../components/PatientsList";
 import History from "../components/History";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import PatientProfile from "../components/PatientProfile";
 import Results from "../components/Results";
 import Diagnosis from "../components/Diagnosis";
-import { json, useLoaderData } from "react-router-dom";
+import { json, useLoaderData, defer, Await } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function PatientsPage() {
-  const data = useLoaderData();
-  const [selectedPatientName, setSelectedPatientName] = useState(data[0].name);
+  const { data } = useLoaderData();
+
+  const [selectedPatientName, setSelectedPatientName] = useState();
   const selectedPatient = (name) => {
     setSelectedPatientName(name);
   };
   return (
     <>
-      <PatientsList
-        onSelectedName={selectedPatientName}
-        onSelect={selectedPatient}
-        data={data}
-      />
-      <History onSelectedName={selectedPatientName} data={data} />
-      <PatientProfile onSelectedName={selectedPatientName} data={data} />
-      <Diagnosis onSelectedName={selectedPatientName} data={data} />
-      <Results onSelectedName={selectedPatientName} data={data} />
+      <Suspense fallback={<LoadingSpinner />}>
+        <Await resolve={data}>
+          {(loadedPatients) => (
+            <>
+              <PatientsList
+                onSelectedName={selectedPatientName}
+                onSelect={selectedPatient}
+                data={loadedPatients}
+              />
+              <History
+                onSelectedName={selectedPatientName}
+                data={loadedPatients}
+              />
+              <PatientProfile
+                onSelectedName={selectedPatientName}
+                data={loadedPatients}
+              />
+              <Diagnosis
+                onSelectedName={selectedPatientName}
+                data={loadedPatients}
+              />
+              <Results
+                onSelectedName={selectedPatientName}
+                data={loadedPatients}
+              />
+            </>
+          )}
+        </Await>
+      </Suspense>
     </>
   );
 }
@@ -32,7 +54,8 @@ const apiUsername = process.env.REACT_APP_API_USERNAME;
 const apiPassword = process.env.REACT_APP_API_PASSWORD;
 
 let auth = btoa(`${apiUsername}:${apiPassword}`);
-export async function loader() {
+
+async function loadPatients() {
   const response = await fetch(
     "https://fedskillstest.coalitiontechnologies.workers.dev",
     { headers: { Authorization: `Basic ${auth}` } }
@@ -41,6 +64,12 @@ export async function loader() {
   if (!response.ok) {
     throw json({ message: "" }, { status: 500 });
   } else {
-    return response;
+    const resData = await response.json();
+    return resData;
   }
+}
+export function loader() {
+  return defer({
+    data: loadPatients(),
+  });
 }
