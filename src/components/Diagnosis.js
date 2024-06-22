@@ -13,8 +13,6 @@ function Diagnosis({ data, onSelectedName }) {
     individualData = diagnosisList[index];
   }
 
-  console.log(individualData);
-
   const DiaList = individualData.map((data, index) => (
     <li key={index}>
       <h1>{data.name}</h1>

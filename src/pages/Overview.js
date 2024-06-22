@@ -1,7 +1,13 @@
+import Pagecontent from "../components/PageContent";
+import { Link } from "react-router-dom";
+
 function OverviewPage() {
   return (
     <>
-      <p>JUST RENDER SOMETHING !!!</p>
+      <Pagecontent title={"Welcome Doctor"}>
+        <p>{`Click on the button below to view patients information `}</p>
+        <Link to="/">Patients</Link>
+      </Pagecontent>
     </>
   );
 }

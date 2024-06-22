@@ -1,8 +1,9 @@
 import classes from "../components/General.module.css";
 import { diaIcons } from "../data/DiaIcons";
+import Card from "./Card";
+import Graph from "./Graph";
 
 function History({ data, onSelectedName }) {
-  console.log(onSelectedName);
   const diagnosisHistory = data.map((diagData) => {
     return diagData.diagnosis_history;
   });
@@ -17,13 +18,16 @@ function History({ data, onSelectedName }) {
 
   const { heart_rate, respiratory_rate, temperature } = individualData;
 
+  let isNormal;
+  if (heart_rate.value >= 80) {
+    isNormal = true;
+  }
+
   return (
-    <section className={`${classes.box} ${classes["box-3"]}`}>
+    <Card>
       <div className={classes["Diagnosis-history"]}>
         <h1>Diagnosis History</h1>
-        <div>
-          <h1>A Graph !</h1>
-        </div>
+        <Graph data={data} onSelectedName={onSelectedName} />
         <div className={`${classes["Diagnosis-history__cards"]}`}>
           <div className={classes["respiratory-card"]}>
             <img src={diaIcons.respiratory} alt="respiratory" />
@@ -42,13 +46,19 @@ function History({ data, onSelectedName }) {
             <h1>Heart Rate</h1>
             <h2>{`${heart_rate.value} bpm`}</h2>
             <p>
-              <img src={diaIcons.downArrow} alt="arrow-down" />
+              <img
+                src={diaIcons.downArrow}
+                alt="arrow-down"
+                className={`${isNormal ? classes["arrow__left"] : ""} ${
+                  !isNormal ? classes.down : ""
+                }`}
+              />
               {heart_rate.levels}
             </p>
           </div>
         </div>
       </div>
-    </section>
+    </Card>
   );
 }
 

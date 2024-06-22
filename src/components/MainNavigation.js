@@ -17,7 +17,7 @@ function MainNavivagtion() {
             <ul>
               <li>
                 <NavLink
-                  to={"/"}
+                  to={"overview"}
                   className={({ isActive }) =>
                     [
                       classes.btn,
@@ -35,7 +35,7 @@ function MainNavivagtion() {
               </li>
               <li>
                 <NavLink
-                  to={"patients"}
+                  to={"/"}
                   className={({ isActive }) =>
                     [
                       classes.btn,

@@ -1,21 +1,17 @@
 import classes from "../components/General.module.css";
 import searchIcon from "../assets/search_FILL0_wght300_GRAD0_opsz24.svg";
 import moreIcon from "../assets/more_horiz_FILL0_wght300_GRAD0_opsz24.svg";
-import { useState } from "react";
 
-function PatientsList({ data, onSelect }) {
-  const [patientName, setPatientName] = useState(data[0].name);
-  onSelect(patientName);
+function PatientsList({ data, onSelect, onSelectedName }) {
   const selectPatient = (name) => {
-    setPatientName(name);
-    // console.log(name);
+    onSelect(name);
   };
   const patientList = data.map((patientData, index) => (
     <li
       onClick={() => selectPatient(patientData.name)}
       key={index}
       className={`${classes.patients} ${
-        patientData.name === patientName ? classes.active : ""
+        patientData.name === onSelectedName ? classes.active : ""
       }`}
     >
       <div className={classes.patient}>
